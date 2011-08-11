@@ -19,11 +19,6 @@ levelText = fs.readFileSync(levelPath).toString()
 
 game = new Game(levelText)
 
-render = ->
-  process.stdout.write game.render()
-  process.stdout.write "\033[" + game.boardWidth  + "D"
-  process.stdout.write "\033[" + game.boardHeight + "A"
-
 tty.setRawMode(true)
 
 process.stdin.on 'keypress', (chunk, key) ->
@@ -35,7 +30,9 @@ process.stdin.on 'keypress', (chunk, key) ->
     when 'c', 'd'
       process.exit() if key.ctrl
 
-  render()
+  process.stdout.write "\033[" + game.boardWidth  + "D"
+  process.stdout.write "\033[" + game.boardHeight + "A"
+  process.stdout.write game.render()
 
-render()
+process.stdout.write game.render()
 process.stdin.resume()
