@@ -34,5 +34,8 @@ class Game
       when 'left'
         @playerX -= 1
 
+    @playerX = Math.max(0, Math.min(@screenWidth-1, @playerX))
+    @playerY = Math.max(0, Math.min(@screenHeight-1, @playerY))
+
 module.exports = Game
 
