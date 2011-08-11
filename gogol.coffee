@@ -46,18 +46,14 @@ render = ->
 
 tty.setRawMode(true)
 
-process.stdin.on 'data', (chunk) ->
-  switch chunk.toString()
-    when '\u0003' # ctrl-C
+process.stdin.on 'keypress', (chunk, key) ->
+  switch key.name
+    when 'up', 'down', 'left', 'right'
+      game.update(key.name)
+    when 'escape', 'q'
       process.exit()
-    when '\u001b[A'
-      game.update 'up'
-    when '\u001b[B'
-      game.update 'down'
-    when '\u001b[C'
-      game.update 'right'
-    when '\u001b[D'
-      game.update 'left'
+    when 'c', 'd'
+      process.exit() if key.ctrl
 
   render()
 
