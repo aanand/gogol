@@ -52,6 +52,8 @@ class Game
     return unless 0 <= newPlayerX < @boardWidth
     return unless 0 <= newPlayerY < @boardHeight
 
+    return unless @board[newPlayerY][newPlayerX] == ' '
+
     @playerX = newPlayerX
     @playerY = newPlayerY
 
