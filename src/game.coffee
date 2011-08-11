@@ -36,18 +36,24 @@ class Game
     lines.join('\n') + '\n'
 
   update: (input) ->
+    newPlayerX = @playerX
+    newPlayerY = @playerY
+
     switch input
       when 'up'
-        @playerY -= 1
+        newPlayerY -= 1
       when 'down'
-        @playerY += 1
+        newPlayerY += 1
       when 'right'
-        @playerX += 1
+        newPlayerX += 1
       when 'left'
-        @playerX -= 1
+        newPlayerX -= 1
 
-    @playerX = Math.max(0, Math.min(@boardWidth-1, @playerX))
-    @playerY = Math.max(0, Math.min(@boardHeight-1, @playerY))
+    return unless 0 <= newPlayerX < @boardWidth
+    return unless 0 <= newPlayerY < @boardHeight
+
+    @playerX = newPlayerX
+    @playerY = newPlayerY
 
 module.exports = Game
 
