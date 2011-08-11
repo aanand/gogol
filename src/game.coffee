@@ -15,7 +15,7 @@ class Game
       y = @boardHeight
 
       for x in [0..line.length-1]
-        if line[x] == 'o'
+        if line[x] == '@'
           @playerX = x
           @playerY = y
           row.push(' ')
@@ -31,7 +31,7 @@ class Game
 
   render: ->
     output = @board.map((row) -> row.map((char) -> char))
-    output[@playerY][@playerX] = 'o'
+    output[@playerY][@playerX] = '@'
     lines = output.map((row) -> row.join(''))
     lines.join('\n') + '\n'
 
