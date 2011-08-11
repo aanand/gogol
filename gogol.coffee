@@ -1,14 +1,28 @@
 util = require 'util'
 tty  = require 'tty'
+path = require 'path'
+fs   = require 'fs'
 
 Game = require './src/game'
 
-game = new Game(screenWidth: 40, screenHeight: 10, playerX: 1, playerY: 1)
+levelName = process.argv[2] || '0'
+levelPath = levelName
+
+unless path.existsSync(levelPath)
+  levelPath = "levels/#{levelPath}.txt"
+
+unless path.existsSync(levelPath)
+  console.log "Could not find level #{util.inspect(levelName)}"
+  process.exit(-1)
+
+levelText = fs.readFileSync(levelPath).toString()
+
+game = new Game(levelText)
 
 render = ->
   process.stdout.write game.render()
-  process.stdout.write "\033[" + game.screenWidth  + "D"
-  process.stdout.write "\033[" + game.screenHeight + "A"
+  process.stdout.write "\033[" + game.boardWidth  + "D"
+  process.stdout.write "\033[" + game.boardHeight + "A"
 
 tty.setRawMode(true)
 
