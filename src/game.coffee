@@ -42,6 +42,7 @@ class Game
   update: (input) ->
     if input == 'z'
       @rewind()
+      false
     else
       @advance(input)
 
@@ -62,9 +63,15 @@ class Game
       when 'left'
         newPlayerX -= 1
 
-    if 0 <= newPlayerX < @boardWidth and 0 <= newPlayerY < @boardHeight and @at(newPlayerX, newPlayerY) == ' '
-      @playerX = newPlayerX
-      @playerY = newPlayerY
+    if 0 <= newPlayerX < @boardWidth and 0 <= newPlayerY < @boardHeight
+      switch @at(newPlayerX, newPlayerY)
+        when ' '
+          @playerX = newPlayerX
+          @playerY = newPlayerY
+        when '█'
+          return true
+
+    false
 
   rewind: ->
     [@board, @playerX, @playerY] = @history.pop() if @history.length

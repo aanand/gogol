@@ -5,34 +5,42 @@ fs   = require 'fs'
 
 Game = require './src/game'
 
-levelName = process.argv[2] || '0'
-levelPath = levelName
+levelNumber = null
+game        = null
 
-unless path.existsSync(levelPath)
-  levelPath = "levels/#{levelPath}.txt"
+loadLevel = ->
+  levelPath = "levels/#{levelNumber}.txt"
 
-unless path.existsSync(levelPath)
-  console.log "Could not find level #{util.inspect(levelName)}"
-  process.exit(-1)
+  unless path.existsSync(levelPath)
+    console.log "Could not find level #{util.inspect(levelNumber)}"
+    process.exit(-1)
 
-levelText = fs.readFileSync(levelPath).toString()
+  levelText = fs.readFileSync(levelPath).toString()
+  game = new Game(levelText)
 
-game = new Game(levelText)
+render = ->
+  process.stdout.write("\033[f")
+  process.stdout.write("\033[2J")
+  process.stdout.write game.render()
+
+levelNumber = Number(process.argv[2] || '0')
+loadLevel()
 
 tty.setRawMode(true)
 
 process.stdin.on 'keypress', (chunk, key) ->
   switch key.name
     when 'up', 'down', 'left', 'right', 'z'
-      game.update(key.name)
+      if game.update(key.name)
+        levelNumber += 1
+        loadLevel()
+
+      render()
     when 'escape', 'q'
       process.exit()
     when 'c', 'd'
       process.exit() if key.ctrl
 
-  process.stdout.write "\033[" + game.boardWidth  + "D"
-  process.stdout.write "\033[" + game.boardHeight + "A"
-  process.stdout.write game.render()
-
-process.stdout.write game.render()
+render()
 process.stdin.resume()
+
