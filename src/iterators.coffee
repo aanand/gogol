@@ -1,4 +1,4 @@
-util = require 'util'
+# util = require 'util'
 
 Iterators =
   '▴': (game, newBoard, x, y) ->
