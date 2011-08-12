@@ -1,5 +1,7 @@
 util = require 'util'
 
+Iterators = require './iterators'
+
 class Game
   constructor: (levelText) ->
     @board       = []
@@ -30,12 +32,14 @@ class Game
       throw "No player found in level text"
 
   render: ->
-    output = @board.map((row) -> row.map((char) -> char))
+    output = @copyBoard()
     output[@playerY][@playerX] = '@'
     lines = output.map((row) -> row.join(''))
     lines.join('\n') + '\n'
 
   update: (input) ->
+    @iterateBoard()
+
     newPlayerX = @playerX
     newPlayerY = @playerY
 
@@ -52,10 +56,32 @@ class Game
     return unless 0 <= newPlayerX < @boardWidth
     return unless 0 <= newPlayerY < @boardHeight
 
-    return unless @board[newPlayerY][newPlayerX] == ' '
+    return unless @at(newPlayerX, newPlayerY) == ' '
 
     @playerX = newPlayerX
     @playerY = newPlayerY
+
+  at: (x, y) -> @board[y][x]
+
+  iterateBoard: ->
+    newBoard = @board.map (row) ->
+      row.map -> null
+
+    for char, processor of Iterators
+      for y in [0...@boardHeight]
+        for x in [0...@boardWidth]
+          if @at(x, y) == char
+            processor(this, newBoard, x, y)
+
+    for y in [0...@boardHeight]
+      for x in [0...@boardWidth]
+        newBoard[y][x] ||= @board[y][x]
+
+    @board = newBoard
+
+  copyBoard: ->
+    @board.map (row) ->
+      row.map (char) -> char
 
 module.exports = Game
 
