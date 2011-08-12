@@ -23,7 +23,7 @@ tty.setRawMode(true)
 
 process.stdin.on 'keypress', (chunk, key) ->
   switch key.name
-    when 'up', 'down', 'left', 'right'
+    when 'up', 'down', 'left', 'right', 'z'
       game.update(key.name)
     when 'escape', 'q'
       process.exit()
