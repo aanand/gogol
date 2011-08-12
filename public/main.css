@@ -1,9 +1,10 @@
 body {
-  background: black;
-  color: white;
+  background: #222;
+  color: #ddd;
 }
 
 pre {
   font-family: Monaco, monospace;
+  line-height: 0.9em;
 }
 
