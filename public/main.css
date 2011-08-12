@@ -4,7 +4,7 @@ body {
 }
 
 pre {
-  font-family: Monaco, monospace;
+  font-family: "Monaco", "Lucida Console", monospace;
   line-height: 0.9em;
 }
 
