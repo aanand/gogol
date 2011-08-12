@@ -4,7 +4,7 @@ Iterators = require './iterators'
 
 class Game
   constructor: (levelText) ->
-    @playerHistory = []
+    @history = []
 
     @board       = []
     @boardWidth  = 0
@@ -46,8 +46,8 @@ class Game
       @advance(input)
 
   advance: (input) ->
-    @iterateBoard(true)
-    @playerHistory.push [@playerX, @playerY]
+    @history.push [@copyBoard(), @playerX, @playerY]
+    @iterateBoard()
 
     newPlayerX = @playerX
     newPlayerY = @playerY
@@ -67,12 +67,11 @@ class Game
       @playerY = newPlayerY
 
   rewind: ->
-    @iterateBoard(false)
-    [@playerX, @playerY] = @playerHistory.pop() if @playerHistory.length
+    [@board, @playerX, @playerY] = @history.pop() if @history.length
 
   at: (x, y) -> @board[y][x]
 
-  iterateBoard: (forwards) ->
+  iterateBoard: ->
     newBoard = @board.map (row) ->
       row.map -> null
 
@@ -80,7 +79,7 @@ class Game
       for y in [0...@boardHeight]
         for x in [0...@boardWidth]
           if @at(x, y) == char
-            processor(this, newBoard, x, y, forwards)
+            processor(this, newBoard, x, y)
 
     for y in [0...@boardHeight]
       for x in [0...@boardWidth]
