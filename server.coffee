@@ -4,6 +4,7 @@ fileify    = require('fileify')
 
 server = connect.createServer()
 
+server.use connect.logger()
 server.use connect.static(__dirname + '/public')
 
 bundle = browserify(entry: __dirname + '/browser.coffee', watch: true)
