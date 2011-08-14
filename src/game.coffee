@@ -28,8 +28,6 @@ class Game
           @playerX = x
           @playerY = y
           charOut = ' '
-        else if @wallChars.indexOf(charIn) != -1
-          charOut = '#'
 
         @board.put(x, y, charOut)
 
@@ -49,13 +47,16 @@ class Game
 
         for i in [0..3]
           v = rldu[i]
-          if @board.get(x+v[0], y+v[1]) == '#'
+          if @isWallChar(@board.get(x+v[0], y+v[1]))
             wallCharIndex += (1 << i)
 
         output.put(x, y, @wallChars[wallCharIndex])
 
     lines = output.rows.map((row) -> row.join(''))
     lines.join('\n') + '\n'
+
+  isWallChar: (char) ->
+    char == '#' or @wallChars.indexOf(char) != -1
 
   update: (input) ->
     if input == 'z'
