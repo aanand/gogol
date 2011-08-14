@@ -3,6 +3,12 @@
 Iterators = require './iterators'
 
 class Game
+  wallChars:
+    '◾───' +
+    '│┌┐┬' +
+    '│└┘┴' +
+    '│├┤┼'
+
   constructor: (levelText) ->
     @history = []
 
@@ -19,12 +25,16 @@ class Game
       y = @boardHeight
 
       for x in [0..line.length-1]
-        if line[x] == '@'
+        char = line[x]
+
+        if char == '@'
           @playerX = x
           @playerY = y
           row.push(' ')
+        else if @wallChars.indexOf(char) != -1
+          row.push('#')
         else
-          row.push(line[x])
+          row.push(char)
 
       @boardHeight += 1
       @boardWidth = Math.max(@boardWidth, row.length)
@@ -36,6 +46,20 @@ class Game
   render: ->
     output = @copyBoard()
     output[@playerY][@playerX] = '@'
+
+    for y in [0...@boardHeight]
+      for x in [0...@boardWidth]
+        if output[y][x] == '#'
+          wallCharIndex = 0
+          rldu = [[+1, 0], [-1, 0], [0, +1], [0, -1]]
+
+          for i in [0..3]
+            v = rldu[i]
+            if @at(x+v[0], y+v[1]) == '#'
+              wallCharIndex += (1 << i)
+
+          output[y][x] = @wallChars[wallCharIndex]
+
     lines = output.map((row) -> row.join(''))
     lines.join('\n') + '\n'
 
@@ -76,11 +100,14 @@ class Game
   rewind: ->
     [@board, @playerX, @playerY] = @history.pop() if @history.length
 
-  at: (x, y) -> @board[y][x]
+  at: (x, y) ->
+    if @board[y]
+      @board[y][x] ? null
+    else
+      null
 
   iterateBoard: ->
-    newBoard = @board.map (row) ->
-      row.map -> null
+    newBoard = @emptyBoard()
 
     for char, processor of Iterators
       for y in [0...@boardHeight]
@@ -97,6 +124,10 @@ class Game
   copyBoard: ->
     @board.map (row) ->
       row.map (char) -> char
+
+  emptyBoard: ->
+    @board.map (row) ->
+      row.map -> null
 
 module.exports = Game
 
