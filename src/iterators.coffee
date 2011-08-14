@@ -3,11 +3,11 @@
 Iterators = {}
 
 extender = (dx, dy, extenderChar) ->
-  Iterators[extenderChar] = (game, newBoard, x, y) ->
-    newBoard[y][x] = '#'
+  Iterators[extenderChar] = (x, y, oldBoard, newBoard) ->
+    newBoard.put(x, y, '#')
 
-    if game.at(x+dx, y+dy) == ' '
-      newBoard[y+dy][x+dx] = extenderChar
+    if oldBoard.get(x+dx, y+dy) == ' '
+      newBoard.put(x+dx, y+dy, extenderChar)
 
 extender(-1, 0, '╺')
 extender(+1, 0, '╸')

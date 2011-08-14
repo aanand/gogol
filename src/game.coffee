@@ -1,5 +1,6 @@
 # util = require 'util'
 
+Board     = require './board'
 Iterators = require './iterators'
 
 class Game
@@ -11,56 +12,49 @@ class Game
 
   constructor: (levelText) ->
     @history = []
+    @board = new Board()
 
-    @board       = []
-    @boardWidth  = 0
-    @boardHeight = 0
+    y = 0
 
     for line in levelText.split("\n")
       line = line.replace /\s+$/, '' # remove trailing whitespace
       continue if line == ''
 
-      row = []
+      for x in [0...line.length]
+        charIn  = line[x]
+        charOut = charIn
 
-      y = @boardHeight
-
-      for x in [0..line.length-1]
-        char = line[x]
-
-        if char == '@'
+        if charIn == '@'
           @playerX = x
           @playerY = y
-          row.push(' ')
-        else if @wallChars.indexOf(char) != -1
-          row.push('#')
-        else
-          row.push(char)
+          charOut = ' '
+        else if @wallChars.indexOf(charIn) != -1
+          charOut = '#'
 
-      @boardHeight += 1
-      @boardWidth = Math.max(@boardWidth, row.length)
-      @board.push(row)
+        @board.put(x, y, charOut)
+
+      y += 1
 
     unless @playerX? and @playerY?
       throw "No player found in level text"
 
   render: ->
-    output = @copyBoard()
-    output[@playerY][@playerX] = '@'
+    output = @board.copy()
+    output.put(@playerX, @playerY, '@')
 
-    for y in [0...@boardHeight]
-      for x in [0...@boardWidth]
-        if output[y][x] == '#'
-          wallCharIndex = 0
-          rldu = [[+1, 0], [-1, 0], [0, +1], [0, -1]]
+    @board.forEachCell (x, y, char) =>
+      if char == '#'
+        wallCharIndex = 0
+        rldu = [[+1, 0], [-1, 0], [0, +1], [0, -1]]
 
-          for i in [0..3]
-            v = rldu[i]
-            if @at(x+v[0], y+v[1]) == '#'
-              wallCharIndex += (1 << i)
+        for i in [0..3]
+          v = rldu[i]
+          if @board.get(x+v[0], y+v[1]) == '#'
+            wallCharIndex += (1 << i)
 
-          output[y][x] = @wallChars[wallCharIndex]
+        output.put(x, y, @wallChars[wallCharIndex])
 
-    lines = output.map((row) -> row.join(''))
+    lines = output.rows.map((row) -> row.join(''))
     lines.join('\n') + '\n'
 
   update: (input) ->
@@ -71,7 +65,7 @@ class Game
       @advance(input)
 
   advance: (input) ->
-    @history.push [@copyBoard(), @playerX, @playerY]
+    @history.push [@board.copy(), @playerX, @playerY]
     @iterateBoard()
 
     newPlayerX = @playerX
@@ -87,47 +81,27 @@ class Game
       when 'left'
         newPlayerX -= 1
 
-    if 0 <= newPlayerX < @boardWidth and 0 <= newPlayerY < @boardHeight
-      switch @at(newPlayerX, newPlayerY)
-        when ' '
-          @playerX = newPlayerX
-          @playerY = newPlayerY
-        when '█'
-          return true
+    switch @board.get(newPlayerX, newPlayerY)
+      when ' '
+        @playerX = newPlayerX
+        @playerY = newPlayerY
+      when '█'
+        return true
 
     false
 
   rewind: ->
     [@board, @playerX, @playerY] = @history.pop() if @history.length
 
-  at: (x, y) ->
-    if @board[y]
-      @board[y][x] ? null
-    else
-      null
-
   iterateBoard: ->
-    newBoard = @emptyBoard()
+    newBoard = @board.copy()
 
-    for char, processor of Iterators
-      for y in [0...@boardHeight]
-        for x in [0...@boardWidth]
-          if @at(x, y) == char
-            processor(this, newBoard, x, y)
-
-    for y in [0...@boardHeight]
-      for x in [0...@boardWidth]
-        newBoard[y][x] ||= @board[y][x]
+    for iChar, processor of Iterators
+      @board.forEachCell (x, y, char) =>
+        if char == iChar
+          processor(x, y, @board, newBoard)
 
     @board = newBoard
-
-  copyBoard: ->
-    @board.map (row) ->
-      row.map (char) -> char
-
-  emptyBoard: ->
-    @board.map (row) ->
-      row.map -> null
 
 module.exports = Game
 
