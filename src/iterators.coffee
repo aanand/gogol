@@ -9,9 +9,9 @@ extender = (dx, dy, extenderChar) ->
     if oldBoard.get(x+dx, y+dy) == ' '
       newBoard.put(x+dx, y+dy, extenderChar)
 
-extender(-1, 0, '╺')
-extender(+1, 0, '╸')
-extender(0, -1, '╻')
-extender(0, +1, '╹')
+extender(-1, 0, '<')
+extender(+1, 0, '>')
+extender(0, -1, '^')
+extender(0, +1, 'v')
 
 module.exports = Iterators
