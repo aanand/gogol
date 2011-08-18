@@ -34,4 +34,12 @@ class Board
 
     new Board(rowsCopy)
 
+  equals: (board) ->
+    answer = true
+
+    @forEachCell (x, y, char) ->
+      answer = false unless board.get(x, y) == char
+
+    answer
+
 module.exports = Board

@@ -66,9 +66,7 @@ class Game
       @advance(input)
 
   advance: (input) ->
-    @history.push [@board.copy(), @playerX, @playerY]
-    @iterateBoard()
-
+    newBoard   = @iterate()
     newPlayerX = @playerX
     newPlayerY = @playerY
 
@@ -82,19 +80,25 @@ class Game
       when 'left'
         newPlayerX -= 1
 
-    switch @board.get(newPlayerX, newPlayerY)
-      when ' '
-        @playerX = newPlayerX
-        @playerY = newPlayerY
-      when '█'
-        return true
+    return true if @board.get(newPlayerX, newPlayerY) == '█'
+
+    if @board.get(newPlayerX, newPlayerY) != ' '
+      newPlayerX = @playerX
+      newPlayerY = @playerY
+
+    unless newBoard.equals(@board) and newPlayerX == @playerX and newPlayerY == @playerY
+      @history.push [@board.copy(), @playerX, @playerY]
+
+      @board   = newBoard
+      @playerX = newPlayerX
+      @playerY = newPlayerY
 
     false
 
   rewind: ->
     [@board, @playerX, @playerY] = @history.pop() if @history.length
 
-  iterateBoard: ->
+  iterate: ->
     newBoard = @board.copy()
 
     for iChar, processor of Iterators
@@ -102,7 +106,7 @@ class Game
         if char == iChar
           processor(x, y, @board, newBoard)
 
-    @board = newBoard
+    newBoard
 
 module.exports = Game
 
