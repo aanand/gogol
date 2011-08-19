@@ -1,7 +1,7 @@
 # util = require 'util'
 
-Board     = require './board'
-Iterators = require './iterators'
+Board  = require './board'
+Pieces = require './pieces'
 
 class Game
   wallChars:
@@ -80,9 +80,13 @@ class Game
       when 'left'
         newPlayerX -= 1
 
-    return true if @board.get(newPlayerX, newPlayerY) == '█'
+    char  = @board.get(newPlayerX, newPlayerY)
+    piece = Pieces[char]
 
-    if @board.get(newPlayerX, newPlayerY) != ' '
+    if piece?.endsLevel
+      return true
+
+    unless piece?.passable
       newPlayerX = @playerX
       newPlayerY = @playerY
 
@@ -101,10 +105,11 @@ class Game
   iterate: ->
     newBoard = @board.copy()
 
-    for iChar, processor of Iterators
-      @board.forEachCell (x, y, char) =>
-        if char == iChar
-          processor(x, y, @board, newBoard)
+    for pChar, piece of Pieces
+      if piece.iterate?
+        @board.forEachCell (x, y, char) =>
+          if char == pChar
+            piece.iterate(x, y, @board, newBoard)
 
     newBoard
 
