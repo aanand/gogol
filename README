@@ -1,0 +1,59 @@
+                                  . 
+                                  | 
+               .-.. .-.  .-.. .-. | 
+              (   |(   )(   |(   )| 
+               `-`| `-'  `-`| `-' `-
+               ._.'      ._.'       
+                      
+
+ A little sketch of a text-based time-rewinding game.
+        (sort of a clone of braid/nethack)
+
+See it in action here: http://gogol.herokuapp.com/
+
+I'm not a good game designer, so I'd love to get some
+help building this thing out, primarily in the form
+of designing levels for it. I've deliberately made the
+level format dead simple - it's just a text file, what
+you see is what you get, you know.
+
+I've got a few ideas for features I want to add, like:
+
+ - stuff that's immune to rewinding (like in Braid!)
+
+ - stuff that iterates forwards or backwards depending
+   on the direction you move in (like in Braid!)
+
+ - some sort of self-duplication thing in the style of
+   "Cursor*10":
+   http://www.nekogames.jp/mt/2008/01/cursor10.html
+
+ - a better name than Gogol, which is just the name of
+   a track by Chilly Gonzales that I had in my head
+   when I was trying to think of a working title
+
+ - in-browser level editor
+
+ - telnet interface
+
+ - maybe it should work in IE ha ha
+
+To get started with the code, install coffee-script
+globally and the other dependencies locally:
+
+    npm install
+    npm install -g coffee-script
+
+To run the game in the terminal, go:
+
+    coffee gogol.coffee [level number, optional]
+
+To run the server, go:
+
+    coffee server.coffee
+
+or
+
+    gem install foreman
+    foreman start
+
