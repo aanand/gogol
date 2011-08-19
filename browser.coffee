@@ -4,17 +4,22 @@ Levels = require.call(this, 'levels')
 levelNumber = null
 game        = null
 
-loadLevel = ->
-  game = new Game(Levels["#{levelNumber}.txt"])
+loadLevel = (n) ->
+  levelNumber = n
+  game        = new Game(Levels["#{levelNumber}.txt"])
+
+  render()
+
+loadLevelFromPath = ->
+  n = Number(location.pathname[1..-1])
+  n = 0 unless n > 0
+  loadLevel(n)
 
 render = ->
   document.body.innerHTML = ""
   pre = document.createElement('pre')
   pre.innerText = game.render()
   document.body.appendChild(pre)
-
-levelNumber = 0
-loadLevel()
 
 window.addEventListener 'keydown', (event) ->
   input = switch event.keyCode
@@ -34,10 +39,12 @@ window.addEventListener 'keydown', (event) ->
   return unless input?
 
   if game.update(input)
-    levelNumber += 1
-    loadLevel()
+    loadLevel(levelNumber+1)
+    window.history.pushState(null, null, levelNumber.toString())
+  else
+    render()
 
-  render()
+window.addEventListener 'popstate', loadLevelFromPath
 
-render()
+loadLevelFromPath()
 
