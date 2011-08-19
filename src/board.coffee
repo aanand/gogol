@@ -21,6 +21,15 @@ class Board
     
     row[x] = char
 
+  search: (needle) ->
+    locations = []
+
+    @forEachCell (x, y, char) ->
+      if char == needle
+        locations.push [x,y]
+
+    locations
+
   forEachCell: (callback) ->
     for y in [0...@rows.length]
       row = @rows[y]

@@ -86,7 +86,10 @@ class Game
     if piece?.endsLevel
       return true
 
-    unless piece?.passable
+    if piece?.passable
+      if piece.onEnter?
+        piece.onEnter(newPlayerX, newPlayerY, newBoard)
+    else
       newPlayerX = @playerX
       newPlayerY = @playerY
 
