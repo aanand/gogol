@@ -81,12 +81,12 @@ class Game
         newPlayerX -= 1
 
     char  = @board.get(newPlayerX, newPlayerY)
-    piece = Pieces[char]
+    piece = Pieces.get(char)
 
-    if piece?.endsLevel
+    if piece.endsLevel
       return true
 
-    if piece?.passable
+    if piece.passable
       if piece.onEnter?
         piece.onEnter(newPlayerX, newPlayerY, newBoard)
     else
