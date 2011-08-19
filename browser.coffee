@@ -16,12 +16,10 @@ loadLevelFromPath = ->
   loadLevel(n)
 
 render = ->
-  document.body.innerHTML = ""
-  pre = document.createElement('pre')
-  pre.innerText = game.render()
-  document.body.appendChild(pre)
+  pre = $('<pre/>').text(game.render())
+  $(document.body).empty().append(pre)
 
-window.addEventListener 'keydown', (event) ->
+handleInput = (event) ->
   input = switch event.keyCode
     when 37
       'left'
@@ -44,7 +42,9 @@ window.addEventListener 'keydown', (event) ->
   else
     render()
 
-window.addEventListener 'popstate', loadLevelFromPath
+$(window)
+  .bind('keydown', handleInput)
+  .bind('popstate', loadLevelFromPath)
 
-loadLevelFromPath()
+$(document).ready(loadLevelFromPath)
 
