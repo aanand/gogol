@@ -1,4 +1,8 @@
-html, body {
+* {
+  font-family: "Monaco", "Lucida Console", monospace;
+}
+
+html, body, #game {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -6,6 +10,17 @@ html, body {
 }
 
 body {
+  background: #222;
+  color: #ddd;
+}
+
+#header {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+}
+
+#game {
   display: -webkit-box;
   -webkit-box-pack: center;
   -webkit-box-align: center;
@@ -17,13 +32,13 @@ body {
   display: box;
   box-pack: center;
   box-align: center;
+}
 
-  background: #222;
-  color: #ddd;
+a {
+  color: inherit;
 }
 
 pre {
-  font-family: "Monaco", "Lucida Console", monospace;
   line-height: 0.9em;
 }
 

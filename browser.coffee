@@ -17,7 +17,7 @@ loadLevelFromPath = ->
 
 render = ->
   pre = $('<pre/>').text(game.render())
-  $(document.body).empty().append(pre)
+  $('#game').empty().append(pre)
 
 handleInput = (event) ->
   input = switch event.keyCode
