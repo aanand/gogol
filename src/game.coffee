@@ -18,7 +18,6 @@ class Game
 
     for line in levelText.split("\n")
       line = line.replace /\s+$/, '' # remove trailing whitespace
-      continue if line == ''
 
       for x in [0...line.length]
         charIn  = line[x]
