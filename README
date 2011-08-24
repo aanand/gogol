@@ -38,8 +38,12 @@ I've got a few ideas for features I want to add, like:
 
  - maybe it should work in IE ha ha
 
-To get started with the code, install coffee-script
-globally and the other dependencies locally:
+To get started with the code, clone the repo:
+
+    git clone https://aanand@github.com/aanand/gogol.git
+
+Install coffee-script globally and the other
+dependencies locally:
 
     npm install
     npm install -g coffee-script
