@@ -2,7 +2,7 @@
   font-family: "Monaco", "Lucida Console", monospace;
 }
 
-html, body, #game {
+html, body, #content {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -20,7 +20,7 @@ body {
   right: 1em;
 }
 
-#game {
+#content {
   display: -webkit-box;
   -webkit-box-pack: center;
   -webkit-box-align: center;
@@ -34,11 +34,11 @@ body {
   box-align: center;
 }
 
-a {
-  color: inherit;
+#game pre {
+  line-height: 0.9em;
 }
 
-pre {
-  line-height: 0.9em;
+a {
+  color: inherit;
 }
 

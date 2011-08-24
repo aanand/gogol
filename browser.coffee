@@ -46,5 +46,8 @@ $(window)
   .bind('keydown', handleInput)
   .bind('popstate', loadLevelFromPath)
 
-$(document).ready(loadLevelFromPath)
+$ ->
+  if $("#game").length > 0
+    loadLevelFromPath()
+
 
