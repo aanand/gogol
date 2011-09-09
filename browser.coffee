@@ -64,9 +64,13 @@ setupEditor = ->
 
   $("#play button").click(loadNextLevel)
 
+  options = []
+
   for filename, text of Levels
     number = filename.match(/\d+/)[0]
-    $("#load select").append("<option value='#{filename}'>#{number}</option>")
+    options.push(number: number, html: "<option value='#{filename}'>#{number}</option>")
+
+  $("#load select").html options.sort((o) -> o.number).map((o) -> o.html).join("")
 
   $("#load button").click ->
     filename = $("#load select").attr('value')
