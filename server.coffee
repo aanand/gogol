@@ -21,6 +21,9 @@ server.get '/README', (req, res) ->
   fs.readFile (__dirname + '/README'), (err, data) ->
     res.render('readme.ejs', readme: data.toString())
 
+server.get '/editor', (req, res) ->
+  res.render('editor.ejs')
+
 port = process.env.PORT || 3000
 server.listen(port)
 console.log "Listening on port #{port}"

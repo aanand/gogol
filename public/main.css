@@ -1,5 +1,5 @@
 * {
-  font-family: "Monaco", "Lucida Console", monospace;
+  font: 16px "Monaco", "Lucida Console", monospace;
 }
 
 html, body, #content {
@@ -34,8 +34,24 @@ body {
   box-align: center;
 }
 
-#game pre {
+#level pre {
   line-height: 0.9em;
+}
+
+#editor textarea {
+  width: 600px;
+  height: 400px;
+  background: #111;
+  color: #ddd;
+  border: 1px solid #444;
+}
+
+#editor #play {
+  float: right;
+}
+
+#player #edit {
+  text-align: center;
 }
 
 a {
