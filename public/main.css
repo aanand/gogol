@@ -38,7 +38,7 @@ body {
   line-height: 0.9em;
 }
 
-#editor textarea {
+.editor textarea {
   width: 600px;
   height: 400px;
   background: #111;
@@ -46,15 +46,15 @@ body {
   border: 1px solid #444;
 }
 
-#editor #play {
+.editor .play {
   float: right;
 }
 
-#player #controls {
+.editor .controls {
   text-align: center;
 }
 
-#player #message {
+.editor .message {
   min-height: 2em;
   padding: 1em 0;
   text-align: center;

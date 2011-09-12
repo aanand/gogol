@@ -3,8 +3,8 @@ Levels = require.call(this, 'levels')
 
 class Gogol extends Backbone.View
   initialize: =>
-    # if @$("#editor").length > 0
-      # new Editor(el: @$("#editor"))
+    if @$(".editor").length > 0
+      new Editor(el: @$(".editor"))
 
     if @$(".adventure").length > 0
       new Adventure(el: @$(".adventure"))
@@ -65,59 +65,88 @@ class Player extends Backbone.View
     $(@el).empty().append(pre)
     this
 
-setupEditor = ->
-  getEditorText =        -> $("#editor textarea").attr('value')
-  setEditorText = (text) -> $("#editor textarea").attr('value', text)
+class Editor extends Backbone.View
+  initialize: =>
+    @player = new Player(el: @$(".player"))
+    @player.bind("levelComplete", @play)
 
-  playLevel = (text) ->
-    loadLevel getEditorText()
-    $("#editor").hide()
-    $("#player").show()
+    @populateLoadSelect()
 
-  loadNextLevel = ->
-    text = getEditorText()
+    if LevelJSON?
+      @level = new Level(LevelJSON)
+      @setEditorText(@level.get('text'))
+      @play()
+    else
+      @edit()
+
+  events:
+    "click .play button" : "checkAndPlay"
+    "click .load button" : "load"
+    "click button.edit"  : "edit"
+    "click button.save"  : "save"
+
+  play: (text) =>
+    @player.loadLevel @getEditorText()
+    @$(".edit-screen").hide()
+    @$(".preview-screen").show()
+
+  checkAndPlay: =>
+    text = @getEditorText()
     at_count = text.match(/@/g)?.length
 
     if at_count == 1
-      playLevel()
+      @play()
     else if typeof at_count == 'undefined'
       alert "No `@' found - you need to place one in order to play!"
     else
       alert "Multiple `@'s found - you need to place exactly one in order to play!"
 
-  $("#play button").click(loadNextLevel)
+  load: =>
+    filename = @$(".load select").attr('value')
+    @$("textarea").attr('value', Levels[filename])
 
-  options = []
+  edit: =>
+    @$(".preview-screen").hide()
+    @$(".edit-screen").show()
 
-  for filename, text of Levels
-    number = filename.match(/\d+/)[0]
-    options.push(number: number, html: "<option value='#{filename}'>#{number}</option>")
+  save: =>
+    @$("#message").text("Saving...")
+    attrs = { text: @getEditorText() }
 
-  $("#load select").html options.sort((o) -> o.number).map((o) -> o.html).join("")
-
-  $("#load button").click ->
-    filename = $("#load select").attr('value')
-    $("#editor textarea").attr('value', Levels[filename])
-
-  $("#edit").click ->
-    $("#player").hide()
-    $("#editor").show()
-
-  $("#save").click ->
-    $("#message").text("Saving...")
-
-    if Level?
-      $.post "/levels/#{Level._id}", {_method: "put", text: getEditorText()}, (result) ->
-        $("#message").text("Level saved.")
-        window.setTimeout (-> $("#message").empty()), 3000
+    if @level?
+      @level.save attrs,
+        success: =>
+          @$(".message").text("Level saved.")
+          window.setTimeout (-> @$(".message").empty()), 3000
     else
-      $.post '/levels', {text: getEditorText()}, (level) ->
-        window.location.href = "/levels/#{level._id}"
+      @level = new Level(attrs)
 
-  if Level?
-    setEditorText(Level.text)
-    playLevel()
-  else
-    $("#player").hide()
+      @level.save {},
+        success: =>
+          window.location.href = "/levels/#{@level.id}"
+
+  populateLoadSelect: =>
+    options = []
+
+    for filename, text of Levels
+      number = filename.match(/\d+/)[0]
+      options.push(number: number, html: "<option value='#{filename}'>#{number}</option>")
+
+    @$(".load select").html options.sort((o) -> o.number).map((o) -> o.html).join("")
+
+  getEditorText:        => @$("textarea").attr('value')
+  setEditorText: (text) => @$("textarea").attr('value', text)
+
+class Level extends Backbone.Model
+  urlRoot: "/levels"
+
+  initialize: (options) =>
+    @setId()
+    @bind("change:_id", @setId)
+
+  setId: =>
+    if id = @get('_id')
+      @id = id
+      @unset('_id')
 
 window.App = new Gogol(el: $("#content"))

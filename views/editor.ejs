@@ -1,22 +1,24 @@
 <script type="text/javascript">
-  var Level = <%- JSON.stringify(level) %>;
+  var LevelJSON = <%- JSON.stringify(level) %>;
 </script>
 
-<div id="player">
-  <div id="level"></div>
-  <div id="controls">
-    <button id="edit">Edit</button>
-    <button id="save">Save</button>
+<div class="editor">
+  <div class="preview-screen">
+    <div class="player"></div>
+    <div class="controls">
+      <button class="edit">Edit</button>
+      <button class="save">Save</button>
+    </div>
+    <div class="message"></div>
   </div>
-  <div id="message"></div>
-</div>
 
-<div id="editor">
-  <div><textarea></textarea></div>
-  <div id="play"><button>Play</button></div>
-  <div id="load">
-    Load level: <select></select>
-    <button>Load</button>
+  <div class="edit-screen">
+    <div><textarea></textarea></div>
+    <div class="play"><button>Play</button></div>
+    <div class="load">
+      Load level: <select></select>
+      <button>Load</button>
+    </div>
   </div>
 </div>
 
