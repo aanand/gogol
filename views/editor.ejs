@@ -1,6 +1,14 @@
+<script type="text/javascript">
+  var Level = <%- JSON.stringify(level) %>;
+</script>
+
 <div id="player">
   <div id="level"></div>
-  <div id="edit"><button>Edit</button></div>
+  <div id="controls">
+    <button id="edit">Edit</button>
+    <button id="save">Save</button>
+  </div>
+  <div id="message"></div>
 </div>
 
 <div id="editor">

@@ -50,7 +50,13 @@ body {
   float: right;
 }
 
-#player #edit {
+#player #controls {
+  text-align: center;
+}
+
+#player #message {
+  min-height: 2em;
+  padding: 1em 0;
   text-align: center;
 }
 

@@ -47,16 +47,20 @@ handleInput = (event) ->
     render()
 
 setupEditor = ->
-  $("#player").hide()
+  getEditorText =        -> $("#editor textarea").attr('value')
+  setEditorText = (text) -> $("#editor textarea").attr('value', text)
+
+  playLevel = (text) ->
+    loadLevel getEditorText()
+    $("#editor").hide()
+    $("#player").show()
 
   loadNextLevel = ->
-    text = $("#editor textarea").attr('value')
+    text = getEditorText()
     at_count = text.match(/@/g)?.length
 
     if at_count == 1
-      loadLevel(text)
-      $("#editor").hide()
-      $("#player").show()
+      playLevel()
     else if typeof at_count == 'undefined'
       alert "No `@' found - you need to place one in order to play!"
     else
@@ -76,9 +80,26 @@ setupEditor = ->
     filename = $("#load select").attr('value')
     $("#editor textarea").attr('value', Levels[filename])
 
-  $("#player button").click ->
+  $("#edit").click ->
     $("#player").hide()
     $("#editor").show()
+
+  $("#save").click ->
+    $("#message").text("Saving...")
+
+    if Level?
+      $.post "/levels/#{Level._id}", {_method: "put", text: getEditorText()}, (result) ->
+        $("#message").text("Level saved.")
+        window.setTimeout (-> $("#message").empty()), 3000
+    else
+      $.post '/levels', {text: getEditorText()}, (level) ->
+        window.location.href = "/levels/#{level._id}"
+
+  if Level?
+    setEditorText(Level.text)
+    playLevel()
+  else
+    $("#player").hide()
 
 setupGame = ->
   loadNextLevel = ->
