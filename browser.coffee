@@ -6,13 +6,13 @@ class Gogol extends Backbone.View
     # if @$("#editor").length > 0
       # new Editor(el: @$("#editor"))
 
-    if @$("#game").length > 0
-      new Adventure(el: @$("#game"))
+    if @$(".adventure").length > 0
+      new Adventure(el: @$(".adventure"))
 
 class Adventure extends Backbone.View
   initialize: =>
     @levelNumber = null
-    @player = new Player(el: @$("#level"))
+    @player = new Player(el: @$(".player"))
 
     @player.bind "levelComplete", =>
       @loadLevelNumber(@levelNumber+1)

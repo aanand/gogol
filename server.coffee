@@ -54,7 +54,7 @@ server.use express.bodyParser()
 server.use express.methodOverride()
 
 server.get /^\/(\d+)?$/, (req, res) ->
-  res.render('game.ejs')
+  res.render('adventure.ejs')
 
 server.get '/README', (req, res) ->
   fs.readFile (__dirname + '/README'), (err, data) ->

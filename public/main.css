@@ -34,7 +34,7 @@ body {
   box-align: center;
 }
 
-#level pre {
+.player pre {
   line-height: 0.9em;
 }
 
