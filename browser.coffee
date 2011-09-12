@@ -1,50 +1,69 @@
 Game   = require './src/game'
 Levels = require.call(this, 'levels')
 
-levelNumber = null
-loadNextLevel = null
-game        = null
+class Gogol extends Backbone.View
+  initialize: =>
+    # if @$("#editor").length > 0
+      # new Editor(el: @$("#editor"))
 
-loadLevel = (text) ->
-  game = new Game(text)
-  render()
+    if @$("#game").length > 0
+      new Adventure(el: @$("#game"))
 
-loadLevelNumber = (n) ->
-  levelNumber = n
-  loadLevel(Levels["#{levelNumber}.txt"])
+class Adventure extends Backbone.View
+  initialize: =>
+    @levelNumber = null
+    @player = new Player(el: @$("#level"))
 
-loadLevelFromPath = ->
-  n = Number(location.pathname[1..-1])
-  n = 0 unless n > 0
-  loadLevelNumber(n)
+    @player.bind "levelComplete", =>
+      @loadLevelNumber(@levelNumber+1)
+      window.history.pushState(null, null, @levelNumber.toString())
 
-render = ->
-  pre = $('<pre/>').text(game.render())
-  $('#level').empty().append(pre)
+    $(window).bind('popstate', @loadLevelFromPath)
+    @loadLevelFromPath()
 
-handleInput = (event) ->
-  return unless $("#level:visible").length > 0
+  loadLevelFromPath: =>
+    n = Number(location.pathname[1..-1])
+    n = 0 unless n > 0
+    @loadLevelNumber(n)
 
-  input = switch event.keyCode
-    when 37
-      'left'
-    when 38
-      'up'
-    when 39
-      'right'
-    when 40
-      'down'
-    when 90
-      'z'
-    else
-      null
+  loadLevelNumber: (n) =>
+    @levelNumber = n
+    @player.loadLevel(Levels["#{@levelNumber}.txt"])
 
-  return unless input?
+class Player extends Backbone.View
+  initialize: =>
+    $(window).keydown (event) =>
+      return unless $(@el).is(":visible")
 
-  if game.update(input)
-    loadNextLevel()
-  else
-    render()
+      input = switch event.keyCode
+        when 37
+          'left'
+        when 38
+          'up'
+        when 39
+          'right'
+        when 40
+          'down'
+        when 90
+          'z'
+        else
+          null
+
+      return unless input?
+
+      if @game.update(input)
+        @trigger("levelComplete")
+      else
+        @render()
+
+  loadLevel: (text) =>
+    @game = new Game(text)
+    @render()
+
+  render: ->
+    pre = $('<pre/>').text(@game.render())
+    $(@el).empty().append(pre)
+    this
 
 setupEditor = ->
   getEditorText =        -> $("#editor textarea").attr('value')
@@ -101,20 +120,4 @@ setupEditor = ->
   else
     $("#player").hide()
 
-setupGame = ->
-  loadNextLevel = ->
-    loadLevelNumber(levelNumber+1)
-    window.history.pushState(null, null, levelNumber.toString())
-
-  $(window).bind('popstate', loadLevelFromPath)
-  loadLevelFromPath()
-
-$(window).bind('keydown', handleInput)
-
-$ ->
-  if $("#editor").length > 0
-    setupEditor()
-  else if $("#game").length > 0
-    setupGame()
-
-
+window.App = new Gogol(el: $("#content"))
