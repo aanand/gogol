@@ -110,7 +110,7 @@ class Editor extends Backbone.View
     @$(".edit-screen").show()
 
   save: =>
-    @$("#message").text("Saving...")
+    @$(".message").text("Saving...")
     attrs = { text: @getEditorText() }
 
     if @level?
