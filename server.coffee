@@ -4,7 +4,7 @@ fileify    = require('fileify')
 mongodb    = require('mongodb')
 fs         = require('fs')
 
-dbUrl = process.env.MONGOHQ_URL || mongodb.Db.DEFAULT_URL
+dbUrl = process.env.MONGOHQ_URL || 'mongo://localhost:27017/gogol'
 
 ensureLevelCollection = (callback) ->
   mongodb.connect dbUrl, (err, db) ->
