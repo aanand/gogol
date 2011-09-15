@@ -114,16 +114,18 @@ class Editor extends Backbone.View
     attrs = { text: @getEditorText() }
 
     if @level?
-      @level.save attrs,
-        success: =>
-          @$(".message").text("Level saved.")
-          window.setTimeout (-> @$(".message").empty()), 3000
+      @level.save attrs, success: @showSavedMessage
     else
       @level = new Level(attrs)
 
       @level.save {},
         success: =>
+          @showSavedMessage()
           window.location.href = "/levels/#{@level.id}"
+
+  showSavedMessage: =>
+    @$(".message").text("Level saved.")
+    window.setTimeout (-> @$(".message").empty()), 3000
 
   populateLoadSelect: =>
     options = []
