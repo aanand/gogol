@@ -10,6 +10,11 @@ class Game
     '│└┘┴' +
     '│├┤┼'
 
+  autoWallChars:
+    '#': 'rldu'
+    '=': 'rl'
+    'I': 'du'
+
   constructor: (levelText) ->
     @history = []
     @board = new Board()
@@ -40,22 +45,32 @@ class Game
     output.put(@playerX, @playerY, '@')
 
     @board.forEachCell (x, y, char) =>
-      if char == '#'
-        wallCharIndex = 0
-        rldu = [[+1, 0], [-1, 0], [0, +1], [0, -1]]
-
-        for i in [0..3]
-          v = rldu[i]
-          if @isWallChar(@board.get(x+v[0], y+v[1]))
-            wallCharIndex += (1 << i)
-
-        output.put(x, y, @wallChars[wallCharIndex])
+      @transformAutoWallChar(output, x, y)
 
     lines = output.rows.map((row) -> row.join(''))
     lines.join('\n') + '\n'
 
-  isWallChar: (char) ->
-    char == '#' or @wallChars.indexOf(char) != -1
+  transformAutoWallChar: (output, x, y) ->
+    charHere   = @board.get(x, y)
+    directions = @autoWallChars[charHere]
+
+    return unless directions?
+
+    wallCharIndex = 0
+    rldu = [[+1, 0], [-1, 0], [0, +1], [0, -1]]
+
+    for i in [0..3]
+      direction = 'rldu'[i]
+      continue if directions.indexOf(direction) == -1
+
+      delta     = rldu[i]
+      charThere = @board.get(x + delta[0], y + delta[1])
+
+      if charThere == charHere or @wallChars.indexOf(charThere) >= 0
+        wallCharIndex += (1 << i)
+
+    charToPut = @wallChars[wallCharIndex]
+    output.put(x, y, charToPut)
 
   update: (input) ->
     if input == 'z'

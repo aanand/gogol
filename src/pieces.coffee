@@ -33,11 +33,15 @@ extender = (dx, dy, extenderChar) ->
     iterate: (x, y, oldBoard, newBoard) ->
       piece = Pieces.get(oldBoard.get(x+dx, y+dy))
 
-      if piece.passable
-        newBoard.put(x+dx, y+dy, extenderChar)
-        newBoard.put(x, y, '#')
-      else if piece.wall
-        newBoard.put(x, y, '#')
+      newBoard.put(x+dx, y+dy, extenderChar) if piece.passable
+
+      if piece.passable or piece.wall
+        wallChar = if dx == 0
+          'I'
+        else
+          '='
+
+        newBoard.put(x, y, wallChar)
 
 extender(-1, 0, '<')
 extender(+1, 0, '>')
