@@ -1,10 +1,27 @@
 Pieces = require('./pieces')
 
 class Board
+  wallChars:
+    '◾───' +
+    '│┌┐┬' +
+    '│└┘┴' +
+    '│├┤┼'
+
+  autoWallChars:
+    '#': 'rldu'
+    '=': 'rl'
+    'I': 'du'
+
   constructor: (rows) ->
     @rows = rows ? []
 
   get: (x, y) ->
+    if x == @playerX and y == @playerY
+      '@'
+    else
+      @getRaw(x, y)
+
+  getRaw: (x, y) ->
     if @rows[y]
       @rows[y][x] ? null
     else
@@ -24,7 +41,7 @@ class Board
     if x >= row.length
       for i in [row.length..x]
         row[i] = null
-    
+
     row[x] = char
 
   putPlayer: (x, y) ->
@@ -33,6 +50,36 @@ class Board
 
   hasPlayer: ->
     @playerX? and @playerY?
+
+  render: ->
+    rendered = @copy()
+
+    @forEachCell (x, y, char) =>
+      if @autoWallChars[char]?
+        @renderAutoWallChar(x, y, char, rendered)
+
+    [0...@rows.length].map (y) =>
+      row = @rows[y]
+      [0...row.length].map (x) ->
+        rendered.get(x, y)
+
+  renderAutoWallChar: (x, y, charHere, output) ->
+    directions = @autoWallChars[charHere]
+    wallCharIndex = 0
+    rldu = [[+1, 0], [-1, 0], [0, +1], [0, -1]]
+
+    for i in [0..3]
+      direction = 'rldu'[i]
+      continue if directions.indexOf(direction) == -1
+
+      delta     = rldu[i]
+      charThere = @get(x + delta[0], y + delta[1])
+
+      if charThere == charHere or @wallChars.indexOf(charThere) >= 0
+        wallCharIndex += (1 << i)
+
+    charToPut = @wallChars[wallCharIndex]
+    output.put(x, y, charToPut)
 
   search: (needle) ->
     locations = []
@@ -62,7 +109,7 @@ class Board
     answer = (@playerX == board.playerX and @playerY == board.playerY)
 
     @forEachCell (x, y, char) ->
-      answer = false unless board.get(x, y) == char
+      answer = false unless board.getRaw(x, y) == char
 
     answer
 

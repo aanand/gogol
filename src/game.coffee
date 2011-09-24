@@ -4,17 +4,6 @@ Board  = require './board'
 Pieces = require './pieces'
 
 class Game
-  wallChars:
-    '◾───' +
-    '│┌┐┬' +
-    '│└┘┴' +
-    '│├┤┼'
-
-  autoWallChars:
-    '#': 'rldu'
-    '=': 'rl'
-    'I': 'du'
-
   constructor: (levelText) ->
     @history = []
     @board = new Board()
@@ -40,36 +29,10 @@ class Game
       throw "No player found in level text"
 
   render: ->
-    output = @board.copy()
-    output.put(@board.playerX, @board.playerY, '@')
+    output = @board.render()
 
-    @board.forEachCell (x, y, char) =>
-      @transformAutoWallChar(output, x, y)
-
-    lines = output.rows.map((row) -> row.join(''))
+    lines = output.map((row) -> row.join(''))
     lines.join('\n') + '\n'
-
-  transformAutoWallChar: (output, x, y) ->
-    charHere   = @board.get(x, y)
-    directions = @autoWallChars[charHere]
-
-    return unless directions?
-
-    wallCharIndex = 0
-    rldu = [[+1, 0], [-1, 0], [0, +1], [0, -1]]
-
-    for i in [0..3]
-      direction = 'rldu'[i]
-      continue if directions.indexOf(direction) == -1
-
-      delta     = rldu[i]
-      charThere = @board.get(x + delta[0], y + delta[1])
-
-      if charThere == charHere or @wallChars.indexOf(charThere) >= 0
-        wallCharIndex += (1 << i)
-
-    charToPut = @wallChars[wallCharIndex]
-    output.put(x, y, charToPut)
 
   update: (input) ->
     if input == 'z'
