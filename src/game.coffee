@@ -42,7 +42,7 @@ class Game
       @advance(input)
 
   advance: (input) ->
-    newBoard   = @iterate()
+    newBoard   = @board.copy()
     newPlayerX = @board.playerX
     newPlayerY = @board.playerY
     move       = true
@@ -71,6 +71,8 @@ class Game
 
         newBoard.putPlayer(newPlayerX, newPlayerY)
 
+    newBoard = @iterate(newBoard)
+
     unless newBoard.equals(@board)
       @history.push(@board.copy())
       @board = newBoard
@@ -80,14 +82,14 @@ class Game
   rewind: ->
     @board = @history.pop() if @history.length
 
-  iterate: ->
-    newBoard = @board.copy()
+  iterate: (oldBoard) ->
+    newBoard = oldBoard.copy()
 
     for pChar, piece of Pieces
       if piece.iterate?
-        @board.forEachCell (x, y, char) =>
+        oldBoard.forEachCell (x, y, char) =>
           if char == pChar
-            piece.iterate(x, y, @board, newBoard)
+            piece.iterate(x, y, oldBoard, newBoard)
 
     newBoard
 

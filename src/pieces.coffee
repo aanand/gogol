@@ -7,6 +7,9 @@ Pieces =
   ' ':
     passable: true
 
+  '@':
+    passable: false
+
   '█':
     endsLevel: true
 
@@ -31,7 +34,7 @@ Pieces =
 extender = (dx, dy, extenderChar) ->
   Pieces[extenderChar] =
     iterate: (x, y, oldBoard, newBoard) ->
-      piece = oldBoard.getPiece(x+dx, y+dy)
+      piece = newBoard.getPiece(x+dx, y+dy)
 
       newBoard.put(x+dx, y+dy, extenderChar) if piece.passable
 
