@@ -51,12 +51,15 @@ class Board
   hasPlayer: ->
     @playerX? and @playerY?
 
-  render: ->
+  render: (options) ->
+    options ||= {}
+
     rendered = @copy()
 
-    @forEachCell (x, y, char) =>
-      if @autoWallChars[char]?
-        @renderAutoWallChar(x, y, char, rendered)
+    unless options.skipAutoWalls
+      @forEachCell (x, y, char) =>
+        if @autoWallChars[char]?
+          @renderAutoWallChar(x, y, char, rendered)
 
     [0...@rows.length].map (y) =>
       row = @rows[y]

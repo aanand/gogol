@@ -28,8 +28,8 @@ class Game
     unless @board.hasPlayer()
       throw "No player found in level text"
 
-  render: ->
-    output = @board.render()
+  render: (options) ->
+    output = @board.render(options)
 
     lines = output.map((row) -> row.join(''))
     lines.join('\n') + '\n'

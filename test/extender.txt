@@ -1,0 +1,44 @@
+# moves normally when the player is far away
+----------
+| @    <=|
+----------
++
+right
+=
+----------
+|  @  <==|
+----------
+
+# 'loses' when the player wants to move into its next square
+-------
+| @ <=|
+-------
++
+right
+=
+-------
+|  @<=|
+-------
+
+# advances if the player is moving out of their next square
+-------
+| @<==|
+-------
++
+left
+=
+-------
+|@<===|
+-------
+
+# blocks the player
+-------
+| @<==|
+-------
++
+right
+=
+-------
+| @<==|
+-------
+
