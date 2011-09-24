@@ -97,8 +97,7 @@ class Game
         move = false
 
     if move
-      char  = @board.get(newPlayerX, newPlayerY)
-      piece = Pieces.get(char)
+      piece = @board.getPiece(newPlayerX, newPlayerY)
 
       if piece.endsLevel
         return true

@@ -31,7 +31,7 @@ Pieces =
 extender = (dx, dy, extenderChar) ->
   Pieces[extenderChar] =
     iterate: (x, y, oldBoard, newBoard) ->
-      piece = Pieces.get(oldBoard.get(x+dx, y+dy))
+      piece = oldBoard.getPiece(x+dx, y+dy)
 
       newBoard.put(x+dx, y+dy, extenderChar) if piece.passable
 

@@ -1,3 +1,5 @@
+Pieces = require('./pieces')
+
 class Board
   constructor: (rows) ->
     @rows = rows ? []
@@ -7,6 +9,10 @@ class Board
       @rows[y][x] ? null
     else
       null
+
+  getPiece: (x, y) ->
+    char = @get(x, y)
+    char and Pieces.get(char)
 
   put: (x, y, char) ->
     if y >= @rows.length
