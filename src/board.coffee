@@ -21,6 +21,13 @@ class Board
     
     row[x] = char
 
+  putPlayer: (x, y) ->
+    @playerX = x
+    @playerY = y
+
+  hasPlayer: ->
+    @playerX? and @playerY?
+
   search: (needle) ->
     locations = []
 
@@ -41,10 +48,12 @@ class Board
     rowsCopy = @rows.map (row) ->
       row.map (char) -> char
 
-    new Board(rowsCopy)
+    newBoard = new Board(rowsCopy)
+    newBoard.putPlayer(@playerX, @playerY)
+    newBoard
 
   equals: (board) ->
-    answer = true
+    answer = (@playerX == board.playerX and @playerY == board.playerY)
 
     @forEachCell (x, y, char) ->
       answer = false unless board.get(x, y) == char

@@ -29,20 +29,19 @@ class Game
         charOut = charIn
 
         if charIn == '@'
-          @playerX = x
-          @playerY = y
+          @board.putPlayer(x, y)
           charOut = ' '
 
         @board.put(x, y, charOut)
 
       y += 1
 
-    unless @playerX? and @playerY?
+    unless @board.hasPlayer()
       throw "No player found in level text"
 
   render: ->
     output = @board.copy()
-    output.put(@playerX, @playerY, '@')
+    output.put(@board.playerX, @board.playerY, '@')
 
     @board.forEachCell (x, y, char) =>
       @transformAutoWallChar(output, x, y)
@@ -81,8 +80,9 @@ class Game
 
   advance: (input) ->
     newBoard   = @iterate()
-    newPlayerX = @playerX
-    newPlayerY = @playerY
+    newPlayerX = @board.playerX
+    newPlayerY = @board.playerY
+    move       = true
 
     switch input
       when 'up'
@@ -93,31 +93,30 @@ class Game
         newPlayerX += 1
       when 'left'
         newPlayerX -= 1
+      else
+        move = false
 
-    char  = @board.get(newPlayerX, newPlayerY)
-    piece = Pieces.get(char)
+    if move
+      char  = @board.get(newPlayerX, newPlayerY)
+      piece = Pieces.get(char)
 
-    if piece.endsLevel
-      return true
+      if piece.endsLevel
+        return true
 
-    if piece.passable
-      if piece.onEnter?
-        piece.onEnter(newPlayerX, newPlayerY, newBoard)
-    else
-      newPlayerX = @playerX
-      newPlayerY = @playerY
+      if piece.passable
+        if piece.onEnter?
+          piece.onEnter(newPlayerX, newPlayerY, newBoard)
 
-    unless newBoard.equals(@board) and newPlayerX == @playerX and newPlayerY == @playerY
-      @history.push [@board.copy(), @playerX, @playerY]
+        newBoard.putPlayer(newPlayerX, newPlayerY)
 
-      @board   = newBoard
-      @playerX = newPlayerX
-      @playerY = newPlayerY
+    unless newBoard.equals(@board)
+      @history.push(@board.copy())
+      @board = newBoard
 
     false
 
   rewind: ->
-    [@board, @playerX, @playerY] = @history.pop() if @history.length
+    @board = @history.pop() if @history.length
 
   iterate: ->
     newBoard = @board.copy()
