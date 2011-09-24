@@ -9,6 +9,17 @@ right
 |  @  <==|
 ----------
 
+# is stopped if the player triggers a ! right in front of it
+----------
+| @x  ?<=|
+----------
++
+right
+=
+----------
+|  @  !<=|
+----------
+
 # 'loses' when the player wants to move into its next square
 -------
 | @ <=|
